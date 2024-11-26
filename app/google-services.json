@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "320938000970",
+    "project_id": "quickcall-9f12c",
+    "storage_bucket": "quickcall-9f12c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:320938000970:android:5804a44555dbfd24279cb3",
+        "android_client_info": {
+          "package_name": "com.app.quickcall"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDX_ekJgGGHaoQV1ve4TPTopcBpabS8G5I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
