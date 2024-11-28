@@ -1,5 +1,7 @@
 package com.app.quickcall.repository;
 
+import android.app.Activity;
+
 import com.app.quickcall.remote.FirebaseClient;
 import com.app.quickcall.utils.SuccessCallback;
 
@@ -24,8 +26,8 @@ public class MainRepository {
         return instance;
     }
 
-    public void login(String username, SuccessCallback callback) {
-        firebaseClient.login(username, ()-> {
+    public void login(Activity activity, String username, String password, SuccessCallback callback) {
+        firebaseClient.login(activity, username, password, ()-> {
             callback.onSuccess();
         });
     }
@@ -36,6 +38,12 @@ public class MainRepository {
 
     public void addUsers(Map<String, Object> user, SuccessCallback callback) {
         firebaseClient.addUser(user, ()-> {
+            callback.onSuccess();
+        });
+    }
+
+    public void signUpUser(Activity activity, String email, String password, SuccessCallback callback) {
+        firebaseClient.signUpUser(activity, email, password, () -> {
             callback.onSuccess();
         });
     }

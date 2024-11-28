@@ -4,10 +4,13 @@ import android.os.Bundle;
 
 import com.app.quickcall.remote.FirebaseClient;
 import com.app.quickcall.repository.MainRepository;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.annotation.NonNull;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,9 +18,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.app.quickcall.ui.main.SectionsPagerAdapter;
 import com.app.quickcall.databinding.ActivityMain2Binding;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMain2Binding binding;
     private FirebaseClient fbClient;
+    String TAG = "MainActivity";
 
     MainRepository mainRepository;
 
@@ -34,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mainRepository = MainRepository.getInstance();
+
 
         binding = ActivityMain2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -51,7 +60,15 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null)
                         .setAnchorView(R.id.fab).show();
-                addUser();
+                //addUser();
+
+//                mainRepository.signUpUser(MainActivity.this, "fdc.christinediane@gmail.com", "password123", () -> {
+//
+//                });
+
+                mainRepository.login(MainActivity.this, "fdc.christinediane@gmail.com", "password123", () -> {
+
+                });
             }
         });
     }
@@ -68,4 +85,12 @@ public class MainActivity extends AppCompatActivity {
 
         });
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+    }
+
+
 }
