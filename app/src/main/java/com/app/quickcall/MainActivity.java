@@ -62,13 +62,13 @@ public class MainActivity extends AppCompatActivity {
                         .setAnchorView(R.id.fab).show();
                 //addUser();
 
-//                mainRepository.signUpUser(MainActivity.this, "fdc.christinediane@gmail.com", "password123", () -> {
-//
-//                });
-
-                mainRepository.login(MainActivity.this, "fdc.christinediane@gmail.com", "password123", () -> {
+                mainRepository.signUpUser(MainActivity.this, "fdc.christinediane@gmail.com", "password123", () -> {
 
                 });
+
+//                mainRepository.login(MainActivity.this, "fdc.christinediane@gmail.com", "password123", () -> {
+//
+//                });
             }
         });
     }

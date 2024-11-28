@@ -19,6 +19,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class FirebaseClient {
@@ -60,9 +61,9 @@ public class FirebaseClient {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            callback.onSuccess();
+                            FirebaseUser currentUser = mAuth.getCurrentUser();
 
+                            callback.onSuccess();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -89,8 +90,17 @@ public class FirebaseClient {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            callback.onSuccess();
+                            FirebaseUser currentUser = mAuth.getCurrentUser();
+
+                            Map<String, Object> user = new HashMap<>();
+                            user.put("email", email);
+
+                            addUser(user, ()-> {
+                                Log.d("FIREBASE", "User added successfully on DB");
+                                callback.onSuccess();
+
+                            });
+
 //                            updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
