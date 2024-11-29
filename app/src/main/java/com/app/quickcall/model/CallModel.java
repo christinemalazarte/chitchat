@@ -1,11 +1,20 @@
 package com.app.quickcall.model;
 
+import com.app.quickcall.utils.DataModelType;
+
 public class CallModel {
 
     private String target;
     private String sender;
     private String data;
+    private DataModelType type;
 
+    public CallModel(String target, String sender, String data, DataModelType type) {
+        this.target = target;
+        this.sender = sender;
+        this.data = data;
+        this.type = type;
+    }
 
     public String getTarget() {
         return target;
@@ -30,4 +39,5 @@ public class CallModel {
     public void setData(String data) {
         this.data = data;
     }
+
 }

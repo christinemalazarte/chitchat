@@ -1,12 +1,13 @@
 package com.app.quickcall.remote;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.app.quickcall.model.CallModel;
+import com.app.quickcall.utils.ErrorCallback;
 import com.app.quickcall.utils.SuccessCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -74,7 +75,7 @@ public class FirebaseClient {
                 });
     }
 
-    public void sendMessage() {
+    public void sendMessage(CallModel callModel, ErrorCallback errorCallback) {
 
     }
 
@@ -114,4 +115,5 @@ public class FirebaseClient {
 
                 });
     }
+
 }
