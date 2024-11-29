@@ -1,30 +1,40 @@
 package com.app.quickcall.repository;
 
+import static com.app.quickcall.utils.DataModelType.StartCall;
+
 import android.app.Activity;
+import android.content.Context;
 
 import com.app.quickcall.model.CallModel;
 import com.app.quickcall.remote.FirebaseClient;
+import com.app.quickcall.utils.ErrorCallback;
+import com.app.quickcall.utils.NewEventCallback;
 import com.app.quickcall.utils.SuccessCallback;
 import com.app.quickcall.webrtc.PeerConnectionObserver;
 import com.app.quickcall.webrtc.WebRtcClient;
+import com.google.firebase.firestore.util.Listener;
+import com.google.gson.Gson;
 
 import org.webrtc.IceCandidate;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
+import org.webrtc.SessionDescription;
 import org.webrtc.SurfaceViewRenderer;
 
 import java.util.Map;
 
 public class MainRepository implements WebRtcClient.Listener {
 
+    public Listener listener;
     private FirebaseClient firebaseClient;
     private WebRtcClient webRtcClient;
     private String username;
+    private final Gson gson = new Gson();
 
     private static MainRepository instance;
 
-
     private String currentUsername;
+    private String target;
 
     private SurfaceViewRenderer remoteView;
 
@@ -56,6 +66,15 @@ public class MainRepository implements WebRtcClient.Listener {
                 @Override
                 public void onConnectionChange(PeerConnection.PeerConnectionState newState) {
                     super.onConnectionChange(newState);
+                    if (newState == PeerConnection.PeerConnectionState.CONNECTED && listener != null) {
+                        listener.webrtcConnected();
+                    }
+
+                    if (newState == PeerConnection.PeerConnectionState.CLOSED || newState == PeerConnection.PeerConnectionState.DISCONNECTED) {
+                        if (listener != null) {
+                            listener.webrtcClosed();
+                        }
+                    }
                 }
 
                 @Override
@@ -102,11 +121,68 @@ public class MainRepository implements WebRtcClient.Listener {
         });
     }
 
-    public void startCall() {
-        webRtcClient.call();
+    public void startCall(String target) {
+        webRtcClient.call(target);
     }
 
     public void switchCamera() {
         webRtcClient.switchCamera();
     }
+
+    public void toggleAudio(Boolean shouldBeMuted){
+        webRtcClient.toggleAudio(shouldBeMuted);
+    }
+    public void toggleVideo(Boolean shouldBeMuted){
+        webRtcClient.toggleVideo(shouldBeMuted);
+    }
+    public void sendCallRequest(String target, ErrorCallback
+            errorCallBack){
+        firebaseClient.sendMessage(
+                new CallModel(target,currentUsername,null, StartCall),errorCallBack
+        );
+    }
+
+    public void endCall(){
+        webRtcClient.closeConnection();
+    }
+
+    public void subscribeForLatestEvent(NewEventCallback callBack){
+        firebaseClient.observeIncomingLatestEvent(model -> {
+            switch (model.getType()){
+
+                case Offer:
+                    this.target = model.getSender();
+                    webRtcClient.onRemoteSessionReceived(new SessionDescription(
+                            SessionDescription.Type.OFFER,model.getData()
+                    ));
+                    webRtcClient.answer(model.getSender());
+                    break;
+                case Answer:
+                    this.target = model.getSender();
+                    webRtcClient.onRemoteSessionReceived(new SessionDescription(
+                            SessionDescription.Type.ANSWER,model.getData()
+                    ));
+                    break;
+                case IceCandidate:
+                    try {
+                        IceCandidate candidate = gson.fromJson(model.getData(),IceCandidate.class);
+                        webRtcClient.addIceCandidate(candidate);
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    break;
+                case StartCall:
+                    this.target = model.getSender();
+                    callBack.onNewEventReceived(model);
+                    break;
+            }
+
+        });
+    }
+
+    public interface Listener {
+        void webrtcConnected();
+        void webrtcClosed();
+    }
+
 }

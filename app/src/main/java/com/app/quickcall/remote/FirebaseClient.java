@@ -1,13 +1,16 @@
 package com.app.quickcall.remote;
 
 import android.app.Activity;
+import android.telecom.Call;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.app.quickcall.model.CallModel;
 import com.app.quickcall.utils.ErrorCallback;
+import com.app.quickcall.utils.NewEventCallback;
 import com.app.quickcall.utils.SuccessCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -16,12 +19,21 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class FirebaseClient {
 
@@ -29,6 +41,8 @@ public class FirebaseClient {
     private FirebaseFirestore db;
     String TAG = "FirebaseClient";
     private FirebaseAuth mAuth;
+    private String currentUsername;
+    private static final String LATEST_EVENT_FIELD_NAME = "latest_event";
 
     public FirebaseClient() {
         db = FirebaseFirestore.getInstance();
@@ -95,6 +109,7 @@ public class FirebaseClient {
 
                             Map<String, Object> user = new HashMap<>();
                             user.put("email", email);
+                            currentUsername = email;
 
                             addUser(user, ()-> {
                                 Log.d("FIREBASE", "User added successfully on DB");
@@ -114,6 +129,46 @@ public class FirebaseClient {
 
 
                 });
+
     }
 
+    public void observeIncomingLatestEvent(NewEventCallback callBack){
+//        db.child(currentUsername).child(LATEST_EVENT_FIELD_NAME).addValueEventListener(
+//                new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        try{
+//                            String data= Objects.requireNonNull(snapshot.getValue()).toString();
+//                            CallModel dataModel = gson.fromJson(data,CallModel.class);
+//                            callBack.onNewEventReceived(dataModel);
+//                        }catch (Exception e){
+//                            e.printStackTrace();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//
+//                    }
+//                }
+//        );
+
+        final DocumentReference docRef = db.collection("users").document(LATEST_EVENT_FIELD_NAME);
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    return;
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    Log.d(TAG, "Current data: " + snapshot.getData());
+                } else {
+                    Log.d(TAG, "Current data: null");
+                }
+            }
+        });
+    }
 }

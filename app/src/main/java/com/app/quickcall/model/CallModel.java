@@ -40,4 +40,11 @@ public class CallModel {
         this.data = data;
     }
 
+    public DataModelType getType() {
+        return type;
+    }
+
+    public void setType(DataModelType type) {
+        this.type = type;
+    }
 }

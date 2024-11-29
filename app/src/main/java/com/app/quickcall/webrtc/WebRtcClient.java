@@ -3,6 +3,7 @@ package com.app.quickcall.webrtc;
 import android.content.Context;
 
 import com.app.quickcall.model.CallModel;
+import com.app.quickcall.utils.DataModelType;
 
 import org.webrtc.AudioSource;
 import org.webrtc.AudioTrack;
@@ -11,6 +12,7 @@ import org.webrtc.CameraVideoCapturer;
 import org.webrtc.DefaultVideoDecoderFactory;
 import org.webrtc.DefaultVideoEncoderFactory;
 import org.webrtc.EglBase;
+import org.webrtc.IceCandidate;
 import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
@@ -27,7 +29,7 @@ import java.util.List;
 public class WebRtcClient {
 
     private Context context;
-    private String email;
+    private String username;
     private EglBase.Context eglBaseContext = EglBase.create().getEglBaseContext();
     private PeerConnectionFactory peerConnectionFactory;
     private PeerConnection peerConnection;
@@ -47,7 +49,7 @@ public class WebRtcClient {
 
     public WebRtcClient(Context context, PeerConnection.Observer observer, String email) {
         this.context = context;
-        this.email = email;
+        this.username = email;
         initPeerConnectionFactory();
         this.peerConnectionFactory = createPeerConnectionFactory();
         iceServerList.add(PeerConnection.IceServer.builder("turn:a.relay.metered.ca:443?transport=tcp")
@@ -139,7 +141,7 @@ public class WebRtcClient {
         throw new IllegalStateException("front facing camera not found");
     }
 
-    public void call() {
+    public void call(String target) {
         peerConnection.createOffer(new SdpObserver() {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {
@@ -149,6 +151,10 @@ public class WebRtcClient {
                     public void onCreateSuccess(SessionDescription desc) {
                         super.onCreateSuccess(desc);
 
+                        if (listener != null) {
+                            listener.onTransferDataToOtherPeer(new CallModel(target, username, sessionDescription.description, DataModelType.Offer));
+                        }
+
                     }
                 }, sessionDescription);
             }
@@ -157,7 +163,7 @@ public class WebRtcClient {
 
     }
 
-    public void answer() {
+    public void answer(String sender) {
         peerConnection.createAnswer(new SdpObserver() {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {
@@ -167,6 +173,12 @@ public class WebRtcClient {
                     @Override
                     public void onCreateSuccess(SessionDescription desc) {
                         super.onCreateSuccess(desc);
+
+                        if (listener!=null){
+                            listener.onTransferDataToOtherPeer(new CallModel(
+                                    sender,username,sessionDescription.description, DataModelType.Answer
+                            ));
+                        }
 
                     }
                 }, sessionDescription);
@@ -191,5 +203,20 @@ public class WebRtcClient {
         }
     }
 
+    public void toggleAudio(Boolean shouldBeMuted) {
+
+    }
+
+    public void toggleVideo(Boolean shouldBeMuted) {
+
+    }
+
+    public void onRemoteSessionReceived(SessionDescription desc) {
+
+    }
+
+    public void addIceCandidate(IceCandidate candidate) {
+
+    }
 
 }
