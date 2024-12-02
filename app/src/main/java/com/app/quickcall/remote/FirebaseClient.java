@@ -21,6 +21,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -43,6 +45,7 @@ public class FirebaseClient {
     private FirebaseAuth mAuth;
     private String currentUsername;
     private static final String LATEST_EVENT_FIELD_NAME = "latest_event";
+    private final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
 
     public FirebaseClient() {
         db = FirebaseFirestore.getInstance();
@@ -68,7 +71,7 @@ public class FirebaseClient {
                 });
     }
 
-    public void login(Activity activity, String email, String password, SuccessCallback callback) {
+    public void login(Activity activity, String email, String password, String username, SuccessCallback callback) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -77,8 +80,10 @@ public class FirebaseClient {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser currentUser = mAuth.getCurrentUser();
-
-                            callback.onSuccess();
+                            dbRef.child(username).setValue("").addOnCompleteListener(tasks -> {
+                                currentUsername = username;
+                                callback.onSuccess();
+                            });
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -90,11 +95,48 @@ public class FirebaseClient {
     }
 
     public void sendMessage(CallModel callModel, ErrorCallback errorCallback) {
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.child(callModel.getTarget()).exists()){
+                    //send the signal to other user
+                    dbRef.child(callModel.getTarget()).child(LATEST_EVENT_FIELD_NAME)
+                            .setValue(gson.toJson(callModel));
+                    Log.d("CALL-FEATURE: exists", gson.toJson(callModel).toString());
 
+                } else {
+                    Log.d("CALL-FEATURE: doesnot exists", callModel.getTarget());
+                    errorCallback.onError();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                errorCallback.onError();
+            }
+        });
     }
 
-    public void observeIncomingCall() {
+    public void observeIncomingLatestEvent(NewEventCallback callback) {
+        dbRef.child(currentUsername).child(LATEST_EVENT_FIELD_NAME).addValueEventListener(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        try{
+                            String data= Objects.requireNonNull(snapshot.getValue()).toString();
+                            CallModel dataModel = gson.fromJson(data,CallModel.class);
+                            callback.onNewEventReceived(dataModel);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                }
+        );
     }
 
     public void signUpUser(Activity activity, String email, String password, SuccessCallback callback) {
@@ -132,7 +174,7 @@ public class FirebaseClient {
 
     }
 
-    public void observeIncomingLatestEvent(NewEventCallback callBack){
+    public void observeIncoming(NewEventCallback callBack){
 //        db.child(currentUsername).child(LATEST_EVENT_FIELD_NAME).addValueEventListener(
 //                new ValueEventListener() {
 //                    @Override
@@ -153,22 +195,22 @@ public class FirebaseClient {
 //                }
 //        );
 
-        final DocumentReference docRef = db.collection("users").document(LATEST_EVENT_FIELD_NAME);
-        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
-                    return;
-                }
-
-                if (snapshot != null && snapshot.exists()) {
-                    Log.d(TAG, "Current data: " + snapshot.getData());
-                } else {
-                    Log.d(TAG, "Current data: null");
-                }
-            }
-        });
+//        final DocumentReference docRef = db.collection("users").document(LATEST_EVENT_FIELD_NAME);
+//        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable DocumentSnapshot snapshot,
+//                                @Nullable FirebaseFirestoreException e) {
+//                if (e != null) {
+//                    Log.w(TAG, "Listen failed.", e);
+//                    return;
+//                }
+//
+//                if (snapshot != null && snapshot.exists()) {
+//                    Log.d(TAG, "Current data: " + snapshot.getData());
+//                } else {
+//                    Log.d(TAG, "Current data: null");
+//                }
+//            }
+//        });
     }
 }

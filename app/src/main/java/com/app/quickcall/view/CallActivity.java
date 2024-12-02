@@ -2,6 +2,7 @@ package com.app.quickcall.view;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -44,7 +45,7 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
         setContentView(views.getRoot());
 
         mainRepository = MainRepository.getInstance();
-        mainRepository.login(CallActivity.this, "fdc.chen@gmail.com", "password123", () -> {
+        mainRepository.login(CallActivity.this, "fdc.christinediane@gmail.com", "password123", "chen", () -> {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA)
                     == PackageManager.PERMISSION_DENIED) {
                 if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
@@ -103,7 +104,7 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
         views.videoButton.setOnClickListener(v->{
             if (isCameraMuted){
                 views.videoButton.setImageResource(R.drawable.ic_baseline_videocam_off_24);
-            }else {
+            } else {
                 views.videoButton.setImageResource(R.drawable.ic_baseline_videocam_24);
             }
             mainRepository.toggleVideo(isCameraMuted);
@@ -119,6 +120,8 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
     @Override
     public void webrtcConnected() {
         runOnUiThread(()->{
+
+            Log.d("webrtcConnected: ", "TRUE");
             views.incomingCallLayout.setVisibility(View.GONE);
             views.whoToCallLayout.setVisibility(View.GONE);
             views.callLayout.setVisibility(View.VISIBLE);

@@ -4,6 +4,7 @@ import static com.app.quickcall.utils.DataModelType.StartCall;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import com.app.quickcall.model.CallModel;
 import com.app.quickcall.remote.FirebaseClient;
@@ -12,6 +13,8 @@ import com.app.quickcall.utils.NewEventCallback;
 import com.app.quickcall.utils.SuccessCallback;
 import com.app.quickcall.webrtc.PeerConnectionObserver;
 import com.app.quickcall.webrtc.WebRtcClient;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.util.Listener;
 import com.google.gson.Gson;
 
@@ -50,42 +53,52 @@ public class MainRepository implements WebRtcClient.Listener {
         return instance;
     }
 
-    public void login(Activity activity, String username, String password, SuccessCallback callback) {
-        firebaseClient.login(activity, username, password, ()-> {
-            this.webRtcClient = new WebRtcClient(activity.getApplicationContext(), new PeerConnectionObserver() {
-                @Override
-                public void onAddStream(MediaStream mediaStream) {
-                    super.onAddStream(mediaStream);
-                    try {
-                        mediaStream.videoTracks.get(0).addSink(remoteView);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+    public void login(Activity activity, String email, String password, String username, SuccessCallback callback) {
+        firebaseClient.login(activity, email, password, username, ()-> {
+                currentUsername = username;
+                this.webRtcClient = new WebRtcClient(activity.getApplicationContext(), new PeerConnectionObserver() {
+                    @Override
+                    public void onAddStream(MediaStream mediaStream) {
+                        super.onAddStream(mediaStream);
 
-                @Override
-                public void onConnectionChange(PeerConnection.PeerConnectionState newState) {
-                    super.onConnectionChange(newState);
-                    if (newState == PeerConnection.PeerConnectionState.CONNECTED && listener != null) {
-                        listener.webrtcConnected();
-                    }
-
-                    if (newState == PeerConnection.PeerConnectionState.CLOSED || newState == PeerConnection.PeerConnectionState.DISCONNECTED) {
-                        if (listener != null) {
-                            listener.webrtcClosed();
+                        try {
+                            mediaStream.videoTracks.get(0).addSink(remoteView);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
-                }
 
-                @Override
-                public void onIceCandidate(IceCandidate iceCandidate) {
-                    super.onIceCandidate(iceCandidate);
-                }
+                    @Override
+                    public void onConnectionChange(PeerConnection.PeerConnectionState newState) {
+                        super.onConnectionChange(newState);
 
-            }, username);
+                        Log.d("CALL-FEATURE: onConnectionChange: " , " " + newState);
+                        if (newState == PeerConnection.PeerConnectionState.CONNECTED && listener != null) {
+                            Log.d("onConnectionChange: " , "TRUE");
 
-            webRtcClient.listener = this;
-            callback.onSuccess();
+                            listener.webrtcConnected();
+                        }
+
+                        if (newState == PeerConnection.PeerConnectionState.CLOSED || newState == PeerConnection.PeerConnectionState.DISCONNECTED) {
+                            if (listener != null) {
+                                listener.webrtcClosed();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onIceCandidate(IceCandidate iceCandidate) {
+                        super.onIceCandidate(iceCandidate);
+                        Log.d("CALL-FEATURE: onIceCandidate: " , target + " " + iceCandidate );
+
+                        webRtcClient.sendIceCandidate(iceCandidate,target);
+
+                    }
+
+                }, currentUsername);
+
+                webRtcClient.listener = this;
+                callback.onSuccess();
         });
     }
 
@@ -122,6 +135,7 @@ public class MainRepository implements WebRtcClient.Listener {
     }
 
     public void startCall(String target) {
+        Log.d("CALL-FEATURE: caller: ", target);
         webRtcClient.call(target);
     }
 
@@ -132,13 +146,18 @@ public class MainRepository implements WebRtcClient.Listener {
     public void toggleAudio(Boolean shouldBeMuted){
         webRtcClient.toggleAudio(shouldBeMuted);
     }
+
     public void toggleVideo(Boolean shouldBeMuted){
         webRtcClient.toggleVideo(shouldBeMuted);
     }
+
     public void sendCallRequest(String target, ErrorCallback
             errorCallBack){
+        Log.d("CALL-FEATURE: CURRENTUSERNAME", currentUsername);
+        Log.d("CALL-FEATURE: TARGET", target);
+
         firebaseClient.sendMessage(
-                new CallModel(target,currentUsername,null, StartCall),errorCallBack
+                new CallModel(target, currentUsername,null, StartCall),errorCallBack
         );
     }
 
@@ -164,10 +183,10 @@ public class MainRepository implements WebRtcClient.Listener {
                     ));
                     break;
                 case IceCandidate:
-                    try {
+                    try{
                         IceCandidate candidate = gson.fromJson(model.getData(),IceCandidate.class);
                         webRtcClient.addIceCandidate(candidate);
-                    } catch (Exception e){
+                    }catch (Exception e){
                         e.printStackTrace();
                     }
                     break;
@@ -179,6 +198,7 @@ public class MainRepository implements WebRtcClient.Listener {
 
         });
     }
+
 
     public interface Listener {
         void webrtcConnected();

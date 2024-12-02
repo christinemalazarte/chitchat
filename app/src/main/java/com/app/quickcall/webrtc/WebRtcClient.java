@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.app.quickcall.model.CallModel;
 import com.app.quickcall.utils.DataModelType;
+import com.google.gson.Gson;
 
 import org.webrtc.AudioSource;
 import org.webrtc.AudioTrack;
@@ -28,6 +29,7 @@ import java.util.List;
 
 public class WebRtcClient {
 
+    private final Gson gson = new Gson();
     private Context context;
     private String username;
     private EglBase.Context eglBaseContext = EglBase.create().getEglBaseContext();
@@ -47,9 +49,9 @@ public class WebRtcClient {
 
     public Listener listener;
 
-    public WebRtcClient(Context context, PeerConnection.Observer observer, String email) {
+    public WebRtcClient(Context context, PeerConnection.Observer observer, String username) {
         this.context = context;
-        this.username = email;
+        this.username = username;
         initPeerConnectionFactory();
         this.peerConnectionFactory = createPeerConnectionFactory();
         iceServerList.add(PeerConnection.IceServer.builder("turn:a.relay.metered.ca:443?transport=tcp")
@@ -146,50 +148,46 @@ public class WebRtcClient {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {
                 super.onCreateSuccess(sessionDescription);
-
-                peerConnection.setLocalDescription(new SdpObserver() {
-                    public void onCreateSuccess(SessionDescription desc) {
-                        super.onCreateSuccess(desc);
-
-                        if (listener != null) {
-                            listener.onTransferDataToOtherPeer(new CallModel(target, username, sessionDescription.description, DataModelType.Offer));
+                peerConnection.setLocalDescription(new SdpObserver(){
+                    @Override
+                    public void onSetSuccess() {
+                        super.onSetSuccess();
+                        //its time to transfer this sdp to other peer
+                        if (listener!=null){
+                            listener.onTransferDataToOtherPeer(new CallModel(
+                                    target,username,sessionDescription.description, DataModelType.Offer
+                            ));
                         }
-
                     }
-                }, sessionDescription);
+                },sessionDescription);
             }
-
         }, mediaConstraints);
 
     }
 
-    public void answer(String sender) {
+    public void answer(String target) {
         peerConnection.createAnswer(new SdpObserver() {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {
                 super.onCreateSuccess(sessionDescription);
-
-                peerConnection.setLocalDescription(new SdpObserver() {
+                peerConnection.setLocalDescription(new SdpObserver(){
                     @Override
-                    public void onCreateSuccess(SessionDescription desc) {
-                        super.onCreateSuccess(desc);
-
+                    public void onSetSuccess() {
+                        super.onSetSuccess();
+                        //its time to transfer this sdp to other peer
                         if (listener!=null){
                             listener.onTransferDataToOtherPeer(new CallModel(
-                                    sender,username,sessionDescription.description, DataModelType.Answer
+                                    target,username,sessionDescription.description, DataModelType.Answer
                             ));
                         }
-
                     }
-                }, sessionDescription);
+                },sessionDescription);
             }
 
         }, mediaConstraints );
     }
 
-    public void switchCamera() {
 
-    }
 
     public void closeConnection(){
         try{
@@ -203,20 +201,34 @@ public class WebRtcClient {
         }
     }
 
-    public void toggleAudio(Boolean shouldBeMuted) {
-
-    }
-
-    public void toggleVideo(Boolean shouldBeMuted) {
-
-    }
-
     public void onRemoteSessionReceived(SessionDescription desc) {
-
+        peerConnection.setRemoteDescription(new SdpObserver(), desc);
     }
 
-    public void addIceCandidate(IceCandidate candidate) {
+    public void addIceCandidate(IceCandidate iceCandidate){
+        peerConnection.addIceCandidate(iceCandidate);
+    }
 
+    public void sendIceCandidate(IceCandidate iceCandidate, String target){
+        addIceCandidate(iceCandidate);
+        if (listener!=null){
+            listener.onTransferDataToOtherPeer(new CallModel(
+                    target,username,gson.toJson(iceCandidate),DataModelType.IceCandidate
+            ));
+        }
+    }
+
+
+    public void switchCamera() {
+        videoCapturer.switchCamera(null);
+    }
+
+    public void toggleVideo(Boolean shouldBeMuted){
+        localVideoTrack.setEnabled(shouldBeMuted);
+    }
+
+    public void toggleAudio(Boolean shouldBeMuted){
+        localAudioTrack.setEnabled(shouldBeMuted);
     }
 
 }

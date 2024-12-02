@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //                });
 
-                mainRepository.login(MainActivity.this, "fdc.christinediane@gmail.com", "password123", () -> {
+                mainRepository.login(MainActivity.this, "fdc.christinediane@gmail.com", "password123", "christine", () -> {
 
                 });
             }
