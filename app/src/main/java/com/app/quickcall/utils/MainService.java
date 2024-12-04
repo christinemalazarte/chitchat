@@ -1,2 +1,4 @@
-package com.app.quickcall.utils;public class MainService {
+package com.app.quickcall.utils;
+
+public class MainService {
 }
