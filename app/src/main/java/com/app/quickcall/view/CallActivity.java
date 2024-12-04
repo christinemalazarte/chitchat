@@ -72,7 +72,7 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
 
     private void init(){
 
-        views.callBtn.setOnClickListener(v->{
+//        views.callBtn.setOnClickListener(v->{
 //            //start a call request here
 //            // pass contactName
 
@@ -82,7 +82,7 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
             });
         }
 
-        });
+//        });
         mainRepository.initLocalView(views.localView);
         mainRepository.initRemoteView(views.remoteView);
         mainRepository.listener = this;
