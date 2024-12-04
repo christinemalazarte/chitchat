@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mainRepository = MainRepository.getInstance();
 
-        String username = "chen"; //chen
+        String username = "christine"; //chen
         String password = "password123"; //password123
 
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {

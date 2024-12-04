@@ -47,6 +47,8 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
 
         contactName = getIntent().getStringExtra("contact_name");
 
+        Log.d("callerr", contactName);
+
         mainRepository = MainRepository.getInstance();
             if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA)
                     == PackageManager.PERMISSION_DENIED) {
