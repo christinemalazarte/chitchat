@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mainRepository = MainRepository.getInstance();
 
-        String username = "christine"; //chen
+        String username = "chen"; //chen
         String password = "password123"; //password123
 
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Redirect to SecondActivity
 
                 mainRepository.login(LoginActivity.this, "fdc.christinediane@gmail.com", password, username,() -> {
-                     Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                    Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                     startActivity(intent);
                 });
 
