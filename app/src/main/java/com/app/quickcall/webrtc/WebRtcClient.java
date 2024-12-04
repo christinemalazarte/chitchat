@@ -217,7 +217,6 @@ public class WebRtcClient {
         }
     }
 
-
     public void switchCamera() {
         videoCapturer.switchCamera(null);
     }

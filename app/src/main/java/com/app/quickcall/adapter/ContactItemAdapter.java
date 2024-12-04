@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.quickcall.R;
+import com.app.quickcall.utils.CallListener;
 import com.app.quickcall.view.CallActivity;
 
 import java.util.List;
@@ -19,10 +20,12 @@ public class ContactItemAdapter extends RecyclerView.Adapter<ContactItemAdapter.
 
     private final List<String> contacts;
     private Context context;
+    private CallListener listener;
 
-    public ContactItemAdapter(Context context, List<String> contacts) {
+    public ContactItemAdapter(Context context, List<String> contacts, CallListener listener) {
         this.contacts = contacts;
         this.context = context;
+        this.listener = listener;
     }
 
     @NonNull
@@ -46,10 +49,9 @@ public class ContactItemAdapter extends RecyclerView.Adapter<ContactItemAdapter.
         holder.imageViewCall.setOnClickListener(v -> {
             // Implement call functionality (e.g., open dialer)
             System.out.println("Call clicked for: " + contacts.get(position));
+            String name = contacts.get(position);
+            listener.startCall(name);
 
-            Intent intent = new Intent(context, CallActivity.class);
-            intent.putExtra("contact_name", contacts.get(position)); // Pass contact name to the new activity
-            context.startActivity(intent);
         });
     }
 

@@ -38,6 +38,7 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
     private Boolean isCameraMuted = false;
     private Boolean isMicrophoneMuted = false;
     private String contactName;
+    private boolean isCaller;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,6 +47,8 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
         setContentView(views.getRoot());
 
         contactName = getIntent().getStringExtra("contact_name");
+        isCaller = getIntent().getBooleanExtra("is_caller", false);
+
 
         Log.d("callerr", contactName);
 
@@ -61,16 +64,25 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
 
     }
 
+    public void startCall() {
+        mainRepository.sendCallRequest(contactName,()->{
+                Toast.makeText(this, "couldnt find the target", Toast.LENGTH_SHORT).show();
+            });
+    }
+
     private void init(){
 
-//        views.callBtn.setOnClickListener(v->{
-            //start a call request here
-            // pass contactName
+        views.callBtn.setOnClickListener(v->{
+//            //start a call request here
+//            // pass contactName
+
+        if (isCaller) {
             mainRepository.sendCallRequest(contactName,()->{
                 Toast.makeText(this, "couldnt find the target", Toast.LENGTH_SHORT).show();
             });
+        }
 
-//        });
+        });
         mainRepository.initLocalView(views.localView);
         mainRepository.initRemoteView(views.remoteView);
         mainRepository.listener = this;
@@ -80,11 +92,16 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
                 runOnUiThread(()->{
                     views.incomingNameTV.setText(data.getSender()+" is Calling you");
                     views.incomingCallLayout.setVisibility(View.VISIBLE);
-                    views.acceptButton.setOnClickListener(v->{
-                        //star the call here
+
+                    if (!isCaller) {
                         mainRepository.startCall(data.getSender());
                         views.incomingCallLayout.setVisibility(View.GONE);
-                    });
+                    }
+//                    views.acceptButton.setOnClickListener(v->{
+//                        //star the call here
+//                        mainRepository.startCall(data.getSender());
+//                        views.incomingCallLayout.setVisibility(View.GONE);
+//                    });
                     views.rejectButton.setOnClickListener(v->{
                         views.incomingCallLayout.setVisibility(View.GONE);
                     });
@@ -126,7 +143,7 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
     public void webrtcConnected() {
         runOnUiThread(()->{
 
-            Log.d("webrtcConnected: ", "TRUE");
+            Log.d("webrtcConnected - CallActivity: ", "TRUE");
             views.incomingCallLayout.setVisibility(View.GONE);
             views.whoToCallLayout.setVisibility(View.GONE);
             views.callLayout.setVisibility(View.VISIBLE);

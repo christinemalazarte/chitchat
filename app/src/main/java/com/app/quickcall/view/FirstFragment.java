@@ -1,5 +1,6 @@
 package com.app.quickcall.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.app.quickcall.R;
 import com.app.quickcall.adapter.ContactItemAdapter;
 import com.app.quickcall.databinding.FragmentFirstBinding;
+import com.app.quickcall.utils.CallListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,6 +30,13 @@ public class FirstFragment extends Fragment {
     private FragmentFirstBinding binding;
     private ContactItemAdapter adapter;
     private List<String> itemList;
+    private Context context;
+    CallListener listener;
+
+    public FirstFragment(Context context, CallListener listener) {
+        this.context = context;
+        this.listener = listener;
+    }
 
     @Override
     public View onCreateView(
@@ -43,7 +52,7 @@ public class FirstFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         itemList = new ArrayList<>();
-        adapter = new ContactItemAdapter(getContext(), itemList);
+        adapter = new ContactItemAdapter(context, itemList, listener);
 
         // Set up RecyclerView
         binding.contactListView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -65,6 +74,8 @@ public class FirstFragment extends Fragment {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                itemList.clear();
+
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     String key = childSnapshot.getKey(); // Get the key
                     itemList.add(key); // Add to list
@@ -90,10 +101,10 @@ public class FirstFragment extends Fragment {
         super.onResume();
 
         // Clear the list
-        if (itemList != null) {
-            itemList.clear();
-            adapter.notifyDataSetChanged(); // Notify the adapter to refresh the RecyclerView
-        }
+//        if (itemList != null) {
+//            itemList.clear();
+//            adapter.notifyDataSetChanged(); // Notify the adapter to refresh the RecyclerView
+//        }
     }
 
 }

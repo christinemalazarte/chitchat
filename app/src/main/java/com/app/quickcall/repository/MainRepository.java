@@ -131,6 +131,7 @@ public class MainRepository implements WebRtcClient.Listener {
     public void initRemoteView(SurfaceViewRenderer view){
         webRtcClient.initRemoteSurfaceView(view);
         this.remoteView = view;
+        String test = "";
     }
 
     @Override
