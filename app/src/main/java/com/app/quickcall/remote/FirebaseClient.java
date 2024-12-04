@@ -139,7 +139,7 @@ public class FirebaseClient {
         );
     }
 
-    public void signUpUser(Activity activity, String email, String password, SuccessCallback callback) {
+    public void signUpUser(Activity activity, String email, String password, String username, SuccessCallback callback) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -151,13 +151,19 @@ public class FirebaseClient {
 
                             Map<String, Object> user = new HashMap<>();
                             user.put("email", email);
-                            currentUsername = email;
+//                            currentUsername = email;
 
-                            addUser(user, ()-> {
-                                Log.d("FIREBASE", "User added successfully on DB");
+                            currentUsername = username;
+
+                            dbRef.child(username).setValue("").addOnCompleteListener(tasks -> {
                                 callback.onSuccess();
-
                             });
+
+//                            addUser(user, ()-> {
+//                                Log.d("FIREBASE", "User added successfully on DB");
+//                                callback.onSuccess();
+//
+//                            });
 
 //                            updateUI(user);
                         } else {

@@ -37,6 +37,7 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
     private MainRepository mainRepository;
     private Boolean isCameraMuted = false;
     private Boolean isMicrophoneMuted = false;
+    private String contactName;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,8 +45,9 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
         views = ActivityCallBinding.inflate(getLayoutInflater());
         setContentView(views.getRoot());
 
+        contactName = getIntent().getStringExtra("contact_name");
+
         mainRepository = MainRepository.getInstance();
-        mainRepository.login(CallActivity.this, "fdc.christinediane@gmail.com", "password123", "chen", () -> {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA)
                     == PackageManager.PERMISSION_DENIED) {
                 if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
@@ -54,24 +56,25 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
             } else {
                 init();
             }
-        });
+
     }
 
     private void init(){
 
-        views.callBtn.setOnClickListener(v->{
+//        views.callBtn.setOnClickListener(v->{
             //start a call request here
-            mainRepository.sendCallRequest(views.targetUserNameEt.getText().toString(),()->{
+            // pass contactName
+            mainRepository.sendCallRequest(contactName,()->{
                 Toast.makeText(this, "couldnt find the target", Toast.LENGTH_SHORT).show();
             });
 
-        });
+//        });
         mainRepository.initLocalView(views.localView);
         mainRepository.initRemoteView(views.remoteView);
         mainRepository.listener = this;
 
         mainRepository.subscribeForLatestEvent(data->{
-            if (data.getType()== DataModelType.StartCall){
+            if (data.getType() == DataModelType.StartCall){
                 runOnUiThread(()->{
                     views.incomingNameTV.setText(data.getSender()+" is Calling you");
                     views.incomingCallLayout.setVisibility(View.VISIBLE);

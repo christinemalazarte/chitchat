@@ -55,51 +55,54 @@ public class MainRepository implements WebRtcClient.Listener {
 
     public void login(Activity activity, String email, String password, String username, SuccessCallback callback) {
         firebaseClient.login(activity, email, password, username, ()-> {
-                currentUsername = username;
-                this.webRtcClient = new WebRtcClient(activity.getApplicationContext(), new PeerConnectionObserver() {
-                    @Override
-                    public void onAddStream(MediaStream mediaStream) {
-                        super.onAddStream(mediaStream);
-
-                        try {
-                            mediaStream.videoTracks.get(0).addSink(remoteView);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onConnectionChange(PeerConnection.PeerConnectionState newState) {
-                        super.onConnectionChange(newState);
-
-                        Log.d("CALL-FEATURE: onConnectionChange: " , " " + newState);
-                        if (newState == PeerConnection.PeerConnectionState.CONNECTED && listener != null) {
-                            Log.d("onConnectionChange: " , "TRUE");
-
-                            listener.webrtcConnected();
-                        }
-
-                        if (newState == PeerConnection.PeerConnectionState.CLOSED || newState == PeerConnection.PeerConnectionState.DISCONNECTED) {
-                            if (listener != null) {
-                                listener.webrtcClosed();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onIceCandidate(IceCandidate iceCandidate) {
-                        super.onIceCandidate(iceCandidate);
-                        Log.d("CALL-FEATURE: onIceCandidate: " , target + " " + iceCandidate );
-
-                        webRtcClient.sendIceCandidate(iceCandidate,target);
-
-                    }
-
-                }, currentUsername);
-
-                webRtcClient.listener = this;
-                callback.onSuccess();
+            currentUsername = username;
+            initWebRtc(activity);
+            webRtcClient.listener = this;
+            callback.onSuccess();
         });
+    }
+
+    public void initWebRtc(Activity activity) {
+        this.webRtcClient = new WebRtcClient(activity.getApplicationContext(), new PeerConnectionObserver() {
+            @Override
+            public void onAddStream(MediaStream mediaStream) {
+                super.onAddStream(mediaStream);
+
+                try {
+                    mediaStream.videoTracks.get(0).addSink(remoteView);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onConnectionChange(PeerConnection.PeerConnectionState newState) {
+                super.onConnectionChange(newState);
+
+                Log.d("CALL-FEATURE: onConnectionChange: " , " " + newState);
+                if (newState == PeerConnection.PeerConnectionState.CONNECTED && listener != null) {
+                    Log.d("onConnectionChange: " , "TRUE");
+
+                    listener.webrtcConnected();
+                }
+
+                if (newState == PeerConnection.PeerConnectionState.CLOSED || newState == PeerConnection.PeerConnectionState.DISCONNECTED) {
+                    if (listener != null) {
+                        listener.webrtcClosed();
+                    }
+                }
+            }
+
+            @Override
+            public void onIceCandidate(IceCandidate iceCandidate) {
+                super.onIceCandidate(iceCandidate);
+                Log.d("CALL-FEATURE: onIceCandidate: " , target + " " + iceCandidate );
+
+                webRtcClient.sendIceCandidate(iceCandidate,target);
+
+            }
+
+        }, currentUsername);
     }
 
     public void setUsername(String username) {
@@ -112,8 +115,11 @@ public class MainRepository implements WebRtcClient.Listener {
         });
     }
 
-    public void signUpUser(Activity activity, String email, String password, SuccessCallback callback) {
-        firebaseClient.signUpUser(activity, email, password, () -> {
+    public void signUpUser(Activity activity, String email, String password, String username, SuccessCallback callback) {
+        firebaseClient.signUpUser(activity, email, password, username, () -> {
+            currentUsername = username;
+            initWebRtc(activity);
+            webRtcClient.listener = this;
             callback.onSuccess();
         });
     }
