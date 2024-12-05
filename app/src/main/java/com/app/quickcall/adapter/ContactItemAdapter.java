@@ -37,13 +37,11 @@ public class ContactItemAdapter extends RecyclerView.Adapter<ContactItemAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-//        Contact contact = contacts.get(position);
-
         // Set contact name
         holder.textViewContactName.setText(contacts.get(position));
 
         // Set placeholder image for the profile picture
-        holder.imageViewContactPhoto.setImageResource(R.drawable.ic_profile_placeholder);
+        holder.imageViewContactPhoto.setImageResource(R.drawable.ic_user);
 
         // Handle call icon click
         holder.imageViewCall.setOnClickListener(v -> {

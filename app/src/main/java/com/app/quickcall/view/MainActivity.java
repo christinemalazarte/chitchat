@@ -1,6 +1,7 @@
 package com.app.quickcall.view;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import com.app.quickcall.R;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements CallListener {
                     callerName = data.getSender();
                     binding.incomingNameTV.setText(data.getSender()+" is Calling you");
                     binding.incomingCallLayout.setVisibility(View.VISIBLE);
+                    binding.incomingCallLayout.setBackgroundColor(Color.WHITE);
 
                     binding.acceptButton.setOnClickListener(v->{
                         //star the call here

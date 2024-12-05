@@ -86,7 +86,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:layout_marginStart="70dp"
+        android:layout_marginStart="50dp"
         android:gravity="bottom"
         android:text="@string/dont_have_account"
         android:textColor="@color/white"
