@@ -35,7 +35,6 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
         contactName = getIntent().getStringExtra("contact_name");
         isCaller = getIntent().getBooleanExtra("is_caller", false);
 
-
         Log.d("callerr", contactName);
 
         mainRepository = MainRepository.getInstance();
