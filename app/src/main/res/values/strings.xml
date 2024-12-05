@@ -10,11 +10,16 @@
     <string name="username">Username </string>
     <string name="password">Password</string>
     <string name="email">Email</string>
+    <string name="username_required">Username*</string>
+    <string name="password_required">Password*</string>
+    <string name="email_required">Email*</string>
     <string name="login">Login</string>
     <string name="signup">SignUp</string>
     <string name="dont_have_account">Don\'t have an account?</string>
     <string name="create_account">Create Account</string>
     <string name="contact_name">Contact Name</string>
+    <string name="feature_soon">We\'re rolling out this feature soon.</string>
+    <string name="already_have_an_account">Already have an account?</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

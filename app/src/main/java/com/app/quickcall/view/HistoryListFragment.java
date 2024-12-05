@@ -7,9 +7,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
-import com.app.quickcall.R;
 import com.app.quickcall.databinding.FragmentHistoryListBinding;
 
 public class HistoryListFragment extends Fragment {
@@ -30,10 +28,6 @@ public class HistoryListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonSecond.setOnClickListener(v ->
-                NavHostFragment.findNavController(HistoryListFragment.this)
-                        .navigate(R.id.action_SecondFragment_to_FirstFragment)
-        );
     }
 
     @Override

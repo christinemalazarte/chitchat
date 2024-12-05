@@ -1,5 +1,6 @@
 package com.app.quickcall.view;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.app.quickcall.R;
 
+@SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
 
     @Override
@@ -19,7 +21,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(() -> {
             Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
             startActivity(intent);
-            finish(); // Close the splash activity
+            finish();
         }, 3000);
     }
 }

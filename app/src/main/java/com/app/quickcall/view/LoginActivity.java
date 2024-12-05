@@ -3,6 +3,7 @@ package com.app.quickcall.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,6 +42,12 @@ public class LoginActivity extends AppCompatActivity {
                 // Redirect to SecondActivity
                 String username = binding.editTextUsername.getText().toString();
                 String password = binding.editTextPassword.getText().toString();
+
+                if (username.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Please input username and password.",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 mainRepository.login(LoginActivity.this, password, username,() -> {
                     Intent intent = new Intent(LoginActivity.this,MainActivity.class);
