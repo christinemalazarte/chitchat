@@ -2,7 +2,6 @@ package com.app.quickcall.view;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -35,8 +34,6 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
         contactName = getIntent().getStringExtra("contact_name");
         isCaller = getIntent().getBooleanExtra("is_caller", false);
 
-        Log.d("callerr", contactName);
-
         mainRepository = MainRepository.getInstance();
             if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA)
                     == PackageManager.PERMISSION_DENIED) {
@@ -48,7 +45,6 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
                         init();
                     }
                 }
-
             } else {
                 init();
             }
@@ -63,26 +59,14 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
 
     private void init(){
 
-//        views.callBtn.setOnClickListener(v->{
-//            //start a call request here
-//            // pass contactName
-
         if (isCaller) {
             mainRepository.sendCallRequest(contactName,()->{
                 Toast.makeText(this, "couldnt find the target", Toast.LENGTH_SHORT).show();
             });
         }
 
-//        });
-
-
         if(mainRepository.webRtcClient.peerConnection == null) {
-            Log.d("PEERCONNECTIONSTAT", "NULL" );
-
             mainRepository.initWebRtc(this);
-        } else {
-            Log.d("PEERCONNECTIONSTAT", "not NULL" );
-
         }
 
         mainRepository.initLocalView(views.localView);
@@ -117,11 +101,8 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
 
         views.micButton.setOnClickListener(v->{
             if (isMicrophoneMuted){
-                Log.d("isMicrophoneMuted", "here true" + isMicrophoneMuted);
                 views.micButton.setImageResource(R.drawable.ic_baseline_mic_off_24);
-            }else {
-                Log.d("isMicrophoneMuted", "here false" + isMicrophoneMuted);
-
+            } else {
                 views.micButton.setImageResource(R.drawable.ic_baseline_mic_24);
             }
             mainRepository.toggleAudio(isMicrophoneMuted);
@@ -147,8 +128,6 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
     @Override
     public void webrtcConnected() {
         runOnUiThread(()->{
-
-            Log.d("webrtcConnected - CallActivity: ", "TRUE");
             views.incomingCallLayout.setVisibility(View.GONE);
             views.whoToCallLayout.setVisibility(View.GONE);
             views.callLayout.setVisibility(View.VISIBLE);

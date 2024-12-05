@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.app.quickcall.adapter.ContactItemAdapter;
-import com.app.quickcall.databinding.FragmentFirstBinding;
+import com.app.quickcall.databinding.FragmentContactListBinding;
 import com.app.quickcall.utils.CallListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,16 +22,16 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FirstFragment extends Fragment {
+public class ContactListFragment extends Fragment {
 
-    private FragmentFirstBinding binding;
+    private FragmentContactListBinding binding;
     private ContactItemAdapter adapter;
     private List<String> itemList;
     private Context context;
     CallListener listener;
     String currentUsername;
 
-    public FirstFragment(Context context, CallListener listener, String currentUsername) {
+    public ContactListFragment(Context context, CallListener listener, String currentUsername) {
         this.context = context;
         this.listener = listener;
         this.currentUsername = currentUsername;
@@ -42,7 +42,7 @@ public class FirstFragment extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-        binding = FragmentFirstBinding.inflate(inflater, container, false);
+        binding = FragmentContactListBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 

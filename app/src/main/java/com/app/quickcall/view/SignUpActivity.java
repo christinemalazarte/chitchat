@@ -35,8 +35,6 @@ public class SignUpActivity extends AppCompatActivity {
 
         mainRepository = MainRepository.getInstance();
 
-        String username = "chen2";
-        String password = "password123"; //password123
 
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,8 +48,13 @@ public class SignUpActivity extends AppCompatActivity {
         binding.btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainRepository.signUpUser(SignUpActivity.this, "fdc.christinediane2@gmail.com", password, username,() -> {
-                    Intent intent = new Intent(SignUpActivity.this, CallActivity.class);
+                String username = binding.editTextUsername.getText().toString();
+                String password = binding.editTextPassword.getText().toString();
+                String email = binding.editTextEmail.getText().toString();
+
+                mainRepository.signUpUser(SignUpActivity.this, email, password, username,() -> {
+                    Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+                    intent.putExtra("current_username", username); // Pass contact name to the new activity
                     startActivity(intent);
                 });
             }

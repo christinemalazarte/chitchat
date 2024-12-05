@@ -35,15 +35,14 @@ public class LoginActivity extends AppCompatActivity {
 
         mainRepository = MainRepository.getInstance();
 
-        String username = "chen"; //chen
-        String password = "password123"; //password123
-
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Redirect to SecondActivity
+                String username = binding.editTextUsername.getText().toString();
+                String password = binding.editTextPassword.getText().toString();
 
-                mainRepository.login(LoginActivity.this, "fdc.christinediane@gmail.com", password, username,() -> {
+                mainRepository.login(LoginActivity.this, password, username,() -> {
                     Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                     intent.putExtra("current_username", username); // Pass contact name to the new activity
                     startActivity(intent);
@@ -55,7 +54,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
-                intent.putExtra("current_username", username); // Pass contact name to the new activity
                 startActivity(intent);
                 finish();
             }

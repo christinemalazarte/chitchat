@@ -10,11 +10,11 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.app.quickcall.R;
-import com.app.quickcall.databinding.FragmentSecondBinding;
+import com.app.quickcall.databinding.FragmentHistoryListBinding;
 
-public class SecondFragment extends Fragment {
+public class HistoryListFragment extends Fragment {
 
-    private FragmentSecondBinding binding;
+    private FragmentHistoryListBinding binding;
 
     @Override
     public View onCreateView(
@@ -22,7 +22,7 @@ public class SecondFragment extends Fragment {
             Bundle savedInstanceState
     ) {
 
-        binding = FragmentSecondBinding.inflate(inflater, container, false);
+        binding = FragmentHistoryListBinding.inflate(inflater, container, false);
         return binding.getRoot();
 
     }
@@ -31,7 +31,7 @@ public class SecondFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         binding.buttonSecond.setOnClickListener(v ->
-                NavHostFragment.findNavController(SecondFragment.this)
+                NavHostFragment.findNavController(HistoryListFragment.this)
                         .navigate(R.id.action_SecondFragment_to_FirstFragment)
         );
     }

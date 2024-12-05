@@ -53,8 +53,8 @@ public class MainRepository implements WebRtcClient.Listener {
         return instance;
     }
 
-    public void login(Activity activity, String email, String password, String username, SuccessCallback callback) {
-        firebaseClient.login(activity, email, password, username, ()-> {
+    public void login(Activity activity, String password, String username, SuccessCallback callback) {
+        firebaseClient.login(activity, password, username, ()-> {
             currentUsername = username;
             initWebRtc(activity);
 //            webRtcClient.listener = this;

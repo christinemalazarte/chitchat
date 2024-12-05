@@ -1,12 +1,10 @@
 package com.app.quickcall.remote;
 
 import android.app.Activity;
-import android.telecom.Call;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.app.quickcall.model.CallModel;
 import com.app.quickcall.utils.ErrorCallback;
@@ -25,12 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -44,6 +37,7 @@ public class FirebaseClient {
     String TAG = "FirebaseClient";
     private FirebaseAuth mAuth;
     private String currentUsername;
+    private String email;
     private static final String LATEST_EVENT_FIELD_NAME = "latest_event";
     private final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
 
@@ -71,27 +65,46 @@ public class FirebaseClient {
                 });
     }
 
-    public void login(Activity activity, String email, String password, String username, SuccessCallback callback) {
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser currentUser = mAuth.getCurrentUser();
-                            dbRef.child(username).setValue("").addOnCompleteListener(tasks -> {
-                                currentUsername = username;
-                                callback.onSuccess();
+    public void login(Activity activity, String password, String username, SuccessCallback callback) {
+        DatabaseReference eggRef = dbRef.child(username).child("email");
+        eggRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()) {
+                    String email = task.getResult().getValue(String.class);
+                    Log.d("TAGonCompleteonComplete", email);
+
+                    mAuth.signInWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        // Sign in success, update UI with the signed-in user's information
+                                        Log.d(TAG, "signInWithEmail:success");
+                                        FirebaseUser currentUser = mAuth.getCurrentUser();
+            //                            dbRef.child(username).setValue("").addOnCompleteListener(tasks -> {
+            //                                currentUsername = username;
+            //                                callback.onSuccess();
+            //                            });
+                                        dbRef.child(username).child("email")
+                                                .setValue(email).addOnCompleteListener(tasks -> {
+                                                    currentUsername = username;
+                                                    callback.onSuccess();
+                                                });
+                                    } else {
+                                        // If sign in fails, display a message to the user.
+                                        Log.w(TAG, "signInWithEmail:failure", task.getException());
+                                        Toast.makeText(activity, "Authentication failed.",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                }
                             });
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(activity, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                } else {
+                    Log.d("TAGonCompleteonCompleteTAGonCompleteonComplete", task.getException().getMessage()); //Don't ignore potential errors!
+                }
+            }
+        });
+
     }
 
     public void sendMessage(CallModel callModel, ErrorCallback errorCallback) {
@@ -126,7 +139,7 @@ public class FirebaseClient {
                             String data= Objects.requireNonNull(snapshot.getValue()).toString();
                             CallModel dataModel = gson.fromJson(data,CallModel.class);
                             callback.onNewEventReceived(dataModel);
-                        }catch (Exception e){
+                        } catch (Exception e){
                             e.printStackTrace();
                         }
                     }
@@ -151,13 +164,13 @@ public class FirebaseClient {
 
                             Map<String, Object> user = new HashMap<>();
                             user.put("email", email);
-//                            currentUsername = email;
-
                             currentUsername = username;
 
-                            dbRef.child(username).setValue("").addOnCompleteListener(tasks -> {
-                                callback.onSuccess();
-                            });
+                            dbRef.child(username).child("email")
+                                    .setValue(email).addOnCompleteListener(tasks -> {
+                                        currentUsername = username;
+                                        callback.onSuccess();
+                                    });
 
 //                            addUser(user, ()-> {
 //                                Log.d("FIREBASE", "User added successfully on DB");
@@ -165,58 +178,14 @@ public class FirebaseClient {
 //
 //                            });
 
-//                            updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(activity, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-//                            updateUI(null);
                         }
                     }
-
-
                 });
-
     }
 
-    public void observeIncoming(NewEventCallback callBack){
-//        db.child(currentUsername).child(LATEST_EVENT_FIELD_NAME).addValueEventListener(
-//                new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        try{
-//                            String data= Objects.requireNonNull(snapshot.getValue()).toString();
-//                            CallModel dataModel = gson.fromJson(data,CallModel.class);
-//                            callBack.onNewEventReceived(dataModel);
-//                        }catch (Exception e){
-//                            e.printStackTrace();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                    }
-//                }
-//        );
-
-//        final DocumentReference docRef = db.collection("users").document(LATEST_EVENT_FIELD_NAME);
-//        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable DocumentSnapshot snapshot,
-//                                @Nullable FirebaseFirestoreException e) {
-//                if (e != null) {
-//                    Log.w(TAG, "Listen failed.", e);
-//                    return;
-//                }
-//
-//                if (snapshot != null && snapshot.exists()) {
-//                    Log.d(TAG, "Current data: " + snapshot.getData());
-//                } else {
-//                    Log.d(TAG, "Current data: null");
-//                }
-//            }
-//        });
-    }
 }

@@ -34,16 +34,16 @@ public class MainActivity extends AppCompatActivity implements CallListener {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        loadFragment(new FirstFragment(getApplicationContext(), this, currentUsername));
+        loadFragment(new ContactListFragment(getApplicationContext(), this, currentUsername));
 
         // Handle tab selection
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment = null;
             if (item.getItemId() == R.id.nav_home) {
-                selectedFragment = new FirstFragment(getApplicationContext(), this, currentUsername);
+                selectedFragment = new ContactListFragment(getApplicationContext(), this, currentUsername);
             } else if (item.getItemId() == R.id.nav_profile) {
-                selectedFragment = new SecondFragment();
+                selectedFragment = new HistoryListFragment();
             }
             return loadFragment(selectedFragment);
         });
