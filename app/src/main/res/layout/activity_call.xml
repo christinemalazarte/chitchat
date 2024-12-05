@@ -44,7 +44,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/incomingCallLayout"
-        android:id="@+id/whoToCallLayout">
+        android:id="@+id/whoToCallLayout"
+        android:visibility="gone">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -85,8 +86,8 @@
 
         <LinearLayout
             android:gravity="center"
-            android:background="@drawable/curve_background"
-            android:backgroundTint="@android:color/secondary_text_light"
+            android:background="@drawable/rounded_bg"
+            android:backgroundTint="@color/black"
             android:id="@+id/controls"
             android:orientation="horizontal"
             android:layout_centerHorizontal="true"

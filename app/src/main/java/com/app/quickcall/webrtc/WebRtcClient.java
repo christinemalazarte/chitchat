@@ -34,7 +34,7 @@ public class WebRtcClient {
     private String username;
     private EglBase.Context eglBaseContext = EglBase.create().getEglBaseContext();
     private PeerConnectionFactory peerConnectionFactory;
-    private PeerConnection peerConnection;
+    public PeerConnection peerConnection;
     private List<PeerConnection.IceServer> iceServerList = new ArrayList<>();
     private CameraVideoCapturer videoCapturer;
     private VideoSource localVideoSource;
@@ -114,6 +114,9 @@ public class WebRtcClient {
                 Thread.currentThread().getName(), eglBaseContext
         );
 
+        localTrackId = "local_track";
+        localStreamId = "local_stream";
+
         videoCapturer = getVideoCapturer();
         videoCapturer.initialize(helper,context,localVideoSource.getCapturerObserver());
         videoCapturer.startCapture(480,360,15);
@@ -191,12 +194,51 @@ public class WebRtcClient {
     public void closeConnection(){
         try{
 
+
             localVideoTrack.dispose();
             videoCapturer.stopCapture();
             videoCapturer.dispose();
             peerConnection.close();
+
+
+            closeMedia();
+
         }catch (Exception e){
             e.printStackTrace();
+        }
+
+
+    }
+
+    public void closeMedia() {
+        if (peerConnection != null) {
+            peerConnection.close();
+            peerConnection = null;
+        }
+
+        if (localAudioTrack != null) {
+            localAudioTrack.dispose();
+            localAudioTrack = null;
+        }
+
+        if (localVideoTrack != null) {
+            localVideoTrack.dispose();
+            localVideoTrack = null;
+        }
+
+        if (videoCapturer != null) {
+            try {
+                videoCapturer.stopCapture();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            videoCapturer.dispose();
+            videoCapturer = null;
+        }
+
+        if (localStream != null) {
+            localStream.dispose();
+            localStream = null;
         }
     }
 

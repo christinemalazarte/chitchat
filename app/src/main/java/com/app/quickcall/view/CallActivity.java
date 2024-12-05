@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -19,19 +18,6 @@ import com.app.quickcall.repository.MainRepository;
 import com.app.quickcall.utils.DataModelType;
 
 public class CallActivity extends AppCompatActivity implements MainRepository.Listener {
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        EdgeToEdge.enable(this);
-//        setContentView(R.layout.activity_call);
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
-//    }
-
 
     private ActivityCallBinding views;
     private MainRepository mainRepository;
@@ -55,9 +41,15 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
         mainRepository = MainRepository.getInstance();
             if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA)
                     == PackageManager.PERMISSION_DENIED) {
-                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 0);
-                init();
+
+                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 100);
+                        init();
+                    }
+                }
+
             } else {
                 init();
             }
@@ -83,6 +75,17 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
         }
 
 //        });
+
+
+        if(mainRepository.webRtcClient.peerConnection == null) {
+            Log.d("PEERCONNECTIONSTAT", "NULL" );
+
+            mainRepository.initWebRtc(this);
+        } else {
+            Log.d("PEERCONNECTIONSTAT", "not NULL" );
+
+        }
+
         mainRepository.initLocalView(views.localView);
         mainRepository.initRemoteView(views.remoteView);
         mainRepository.listener = this;
@@ -115,8 +118,11 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
 
         views.micButton.setOnClickListener(v->{
             if (isMicrophoneMuted){
+                Log.d("isMicrophoneMuted", "here true" + isMicrophoneMuted);
                 views.micButton.setImageResource(R.drawable.ic_baseline_mic_off_24);
             }else {
+                Log.d("isMicrophoneMuted", "here false" + isMicrophoneMuted);
+
                 views.micButton.setImageResource(R.drawable.ic_baseline_mic_24);
             }
             mainRepository.toggleAudio(isMicrophoneMuted);
@@ -152,6 +158,7 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
 
     @Override
     public void webrtcClosed() {
+        mainRepository.webRtcClient.peerConnection = null;
         runOnUiThread(this::finish);
     }
 }

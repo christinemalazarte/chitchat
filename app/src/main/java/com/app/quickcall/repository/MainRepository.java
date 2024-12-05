@@ -30,7 +30,7 @@ public class MainRepository implements WebRtcClient.Listener {
 
     public Listener listener;
     private FirebaseClient firebaseClient;
-    private WebRtcClient webRtcClient;
+    public WebRtcClient webRtcClient;
     private String username;
     private final Gson gson = new Gson();
 
@@ -57,12 +57,16 @@ public class MainRepository implements WebRtcClient.Listener {
         firebaseClient.login(activity, email, password, username, ()-> {
             currentUsername = username;
             initWebRtc(activity);
-            webRtcClient.listener = this;
+//            webRtcClient.listener = this;
             callback.onSuccess();
         });
     }
 
+
+
     public void initWebRtc(Activity activity) {
+
+        Log.d("currenUsername", currentUsername);
         this.webRtcClient = new WebRtcClient(activity.getApplicationContext(), new PeerConnectionObserver() {
             @Override
             public void onAddStream(MediaStream mediaStream) {
@@ -103,6 +107,8 @@ public class MainRepository implements WebRtcClient.Listener {
             }
 
         }, currentUsername);
+
+        webRtcClient.listener = this;
     }
 
     public void setUsername(String username) {
@@ -119,7 +125,7 @@ public class MainRepository implements WebRtcClient.Listener {
         firebaseClient.signUpUser(activity, email, password, username, () -> {
             currentUsername = username;
             initWebRtc(activity);
-            webRtcClient.listener = this;
+//            webRtcClient.listener = this;
             callback.onSuccess();
         });
     }
@@ -170,6 +176,7 @@ public class MainRepository implements WebRtcClient.Listener {
 
     public void endCall(){
         webRtcClient.closeConnection();
+
     }
 
     public void subscribeForLatestEvent(NewEventCallback callBack){

@@ -20,32 +20,16 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
 import com.app.quickcall.databinding.ActivityMainBinding;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements CallListener, MainRepository.Listener {
 
-    private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
     private FirebaseClient fbClient;
 
     String callerName;
     MainRepository mainRepository;
 
-    // Access a Cloud Firestore instance from your Activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,21 +40,6 @@ public class MainActivity extends AppCompatActivity implements CallListener, Mai
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-//
-//        setSupportActionBar(binding.toolbar);
-
-
-//        binding.fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                mainRepository.login("diane");
-//
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAnchorView(R.id.fab)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
         loadFragment(new FirstFragment(getApplicationContext(), this));
 
         // Handle tab selection
@@ -156,4 +125,6 @@ public class MainActivity extends AppCompatActivity implements CallListener, Mai
     public void webrtcClosed() {
 
     }
+
+
 }
