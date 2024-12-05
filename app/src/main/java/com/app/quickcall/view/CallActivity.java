@@ -35,19 +35,8 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
         isCaller = getIntent().getBooleanExtra("is_caller", false);
 
         mainRepository = MainRepository.getInstance();
-            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA)
-                    == PackageManager.PERMISSION_DENIED) {
-                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 0);
 
-                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 100);
-                        init();
-                    }
-                }
-            } else {
-                init();
-            }
+        init();
 
     }
 
