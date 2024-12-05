@@ -96,6 +96,11 @@ public class FirebaseClient {
 
     }
 
+    public void logout() {
+        mAuth.signOut();
+
+    }
+
     public void sendMessage(CallModel callModel, ErrorCallback errorCallback) {
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

@@ -39,8 +39,6 @@ public class MainActivity extends AppCompatActivity implements CallListener {
     String callerName;
     MainRepository mainRepository;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,8 +58,10 @@ public class MainActivity extends AppCompatActivity implements CallListener {
             Fragment selectedFragment = null;
             if (item.getItemId() == R.id.nav_home) {
                 selectedFragment = new ContactListFragment(getApplicationContext(), this, currentUsername);
-            } else if (item.getItemId() == R.id.nav_profile) {
+            } else if (item.getItemId() == R.id.nav_history) {
                 selectedFragment = new HistoryListFragment();
+            }  else if (item.getItemId() == R.id.nav_profile) {
+                selectedFragment = new ProfileFragment();
             }
             return loadFragment(selectedFragment);
         });

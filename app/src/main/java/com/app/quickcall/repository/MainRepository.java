@@ -55,6 +55,10 @@ public class MainRepository implements WebRtcClient.Listener {
         });
     }
 
+    public void logout() {
+        firebaseClient.logout();
+    }
+
 
 
     public void initWebRtc(Activity activity) {
