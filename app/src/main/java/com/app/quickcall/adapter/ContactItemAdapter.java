@@ -1,7 +1,6 @@
 package com.app.quickcall.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.quickcall.R;
 import com.app.quickcall.utils.CallListener;
-import com.app.quickcall.view.CallActivity;
 
 import java.util.List;
 
@@ -46,10 +44,8 @@ public class ContactItemAdapter extends RecyclerView.Adapter<ContactItemAdapter.
         // Handle call icon click
         holder.imageViewCall.setOnClickListener(v -> {
             // Implement call functionality (e.g., open dialer)
-            System.out.println("Call clicked for: " + contacts.get(position));
             String name = contacts.get(position);
             listener.startCall(name);
-
         });
     }
 
