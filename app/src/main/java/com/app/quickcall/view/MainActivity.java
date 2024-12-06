@@ -15,8 +15,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.Manifest;
 import android.widget.Toast;
@@ -26,12 +24,9 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import com.app.quickcall.databinding.ActivityMainBinding;
 
-import java.util.Arrays;
-
 public class MainActivity extends AppCompatActivity implements CallListener {
 
     private ActivityMainBinding binding;
-    private FirebaseClient fbClient;
     private final int CAMERA_PERMISSION_CODE = 1;
     private final int CAMERA_REQUEST_CODE = 2;
     private final int AUDIO_PERMISSION_CODE = 3;
@@ -70,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements CallListener {
             if (data.getType() == DataModelType.StartCall){
                 runOnUiThread(()->{
                     callerName = data.getSender();
-                    binding.incomingNameTV.setText(data.getSender()+" is Calling you");
+                    binding.incomingNameTV.setText(data.getSender()+ " is calling");
                     binding.incomingCallLayout.setVisibility(View.VISIBLE);
                     binding.incomingCallLayout.setBackgroundColor(Color.WHITE);
 
@@ -85,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements CallListener {
                         startActivity(intent);
                     });
                     binding.rejectButton.setOnClickListener(v->{
+                        mainRepository.rejectCall(callerName);
                         binding.incomingCallLayout.setVisibility(View.GONE);
                     });
                 });

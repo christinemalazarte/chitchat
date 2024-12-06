@@ -7,6 +7,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.app.quickcall.model.CallModel;
+import com.app.quickcall.utils.DataModelType;
 import com.app.quickcall.utils.ErrorCallback;
 import com.app.quickcall.utils.NewEventCallback;
 import com.app.quickcall.utils.SuccessCallback;
@@ -78,6 +79,11 @@ public class FirebaseClient {
                                         dbRef.child(username).child("email")
                                                 .setValue(email).addOnCompleteListener(tasks -> {
                                                     currentUsername = username;
+                                                });
+
+                                        dbRef.child(username).child(LATEST_EVENT_FIELD_NAME)
+                                                .setValue("").addOnCompleteListener(tasks -> {
+                                                    currentUsername = username;
                                                     callback.onSuccess();
                                                 });
                                     } else {
@@ -109,6 +115,12 @@ public class FirebaseClient {
                     //send the signal to other user
                     dbRef.child(callModel.getTarget()).child(LATEST_EVENT_FIELD_NAME)
                             .setValue(gson.toJson(callModel));
+
+                    if (callModel.getType() == DataModelType.CallRejected) {
+                        resetLatestEvents(callModel);
+                    }
+
+
                 } else {
                     errorCallback.onError();
                 }
@@ -119,6 +131,15 @@ public class FirebaseClient {
                 errorCallback.onError();
             }
         });
+    }
+
+    public void resetLatestEvents(CallModel callModel) {
+        dbRef.child(callModel.getTarget()).child(LATEST_EVENT_FIELD_NAME)
+                .setValue("");
+
+        dbRef.child(callModel.getSender()).child(LATEST_EVENT_FIELD_NAME)
+                .setValue("");
+
     }
 
     public void observeIncomingLatestEvent(NewEventCallback callback) {

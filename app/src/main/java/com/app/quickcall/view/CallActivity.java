@@ -1,16 +1,11 @@
 package com.app.quickcall.view;
 
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import android.Manifest;
-
 import com.app.quickcall.R;
 import com.app.quickcall.databinding.ActivityCallBinding;
 import com.app.quickcall.repository.MainRepository;
@@ -33,17 +28,8 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
 
         contactName = getIntent().getStringExtra("contact_name");
         isCaller = getIntent().getBooleanExtra("is_caller", false);
-
         mainRepository = MainRepository.getInstance();
-
         init();
-
-    }
-
-    public void startCall() {
-        mainRepository.sendCallRequest(contactName,()->{
-                Toast.makeText(this, "couldnt find the target", Toast.LENGTH_SHORT).show();
-            });
     }
 
     private void init(){
@@ -72,15 +58,12 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
                         mainRepository.startCall(data.getSender());
                         views.incomingCallLayout.setVisibility(View.GONE);
                     }
-//                    views.acceptButton.setOnClickListener(v->{
-//                        //star the call here
-//                        mainRepository.startCall(data.getSender());
-//                        views.incomingCallLayout.setVisibility(View.GONE);
-//                    });
-                    views.rejectButton.setOnClickListener(v->{
-                        views.incomingCallLayout.setVisibility(View.GONE);
-                    });
                 });
+            }
+
+            if (data.getType() == DataModelType.CallRejected) {
+                mainRepository.webRtcClient.peerConnection = null;
+                runOnUiThread(this::finish);
             }
         });
 
@@ -125,6 +108,7 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
 
     @Override
     public void webrtcClosed() {
+
         mainRepository.webRtcClient.peerConnection = null;
         runOnUiThread(this::finish);
     }

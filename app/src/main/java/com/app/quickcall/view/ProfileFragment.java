@@ -1,5 +1,6 @@
 package com.app.quickcall.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -34,8 +35,9 @@ public class ProfileFragment extends Fragment {
         binding.btnLogout.setOnClickListener( v -> {
             mainRepository.logout();
             getActivity().finish();
+            Intent intent = new Intent(getContext(), LoginActivity.class);
+            startActivity(intent);
         });
-
     }
 
     @Override

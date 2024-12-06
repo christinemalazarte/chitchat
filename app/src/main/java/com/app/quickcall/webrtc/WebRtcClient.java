@@ -193,21 +193,16 @@ public class WebRtcClient {
 
     public void closeConnection(){
         try{
-
-
             localVideoTrack.dispose();
             videoCapturer.stopCapture();
             videoCapturer.dispose();
             peerConnection.close();
-
 
             closeMedia();
 
         }catch (Exception e){
             e.printStackTrace();
         }
-
-
     }
 
     public void closeMedia() {

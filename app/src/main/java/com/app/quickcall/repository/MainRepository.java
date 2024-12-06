@@ -1,5 +1,6 @@
 package com.app.quickcall.repository;
 
+import static com.app.quickcall.utils.DataModelType.CallRejected;
 import static com.app.quickcall.utils.DataModelType.StartCall;
 
 import android.app.Activity;
@@ -186,9 +187,31 @@ public class MainRepository implements WebRtcClient.Listener {
                     this.target = model.getSender();
                     callBack.onNewEventReceived(model);
                     break;
+                case CallRejected:
+                    Log.d("hereeetest", "testset");
+                    callBack.onNewEventReceived(model);
+                    break;
             }
 
         });
+    }
+
+    public void rejectCall(String target) {
+        if (target != null && !target.isEmpty()) {
+            Log.d("CALL-FEATURE", "Rejecting call from: " + target);
+
+            // Notify the caller that the call is rejected
+            firebaseClient.sendMessage(
+                    new CallModel(target, currentUsername, null, CallRejected),
+                    () -> {
+                        Log.d("CALL-FEATURE", "Call rejection sent successfully to: " + target);
+                    }
+            );
+
+
+        } else {
+            Log.e("CALL-FEATURE", "Cannot reject call: Target is null or empty.");
+        }
     }
 
 
