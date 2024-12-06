@@ -37,7 +37,7 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
 
         if (isCaller) {
             mainRepository.sendCallRequest(contactName,()->{
-                Toast.makeText(this, "couldnt find the target", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Couldn't find the contact", Toast.LENGTH_SHORT).show();
             });
         }
 
