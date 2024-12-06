@@ -3,7 +3,22 @@
     <style name="Base.Theme.QuickCall" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="buttonStyle">@null</item>
+
     </style>
 
-    <style name="Theme.QuickCall" parent="Base.Theme.QuickCall" />
+    <style name="Theme.QuickCall" parent="Base.Theme.QuickCall" >
+
+    </style>
+
+    <style name="Theme.QuickCall.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.QuickCall.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.QuickCall.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
 </resources>

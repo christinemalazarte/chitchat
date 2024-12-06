@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="4dp"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Contact Photo -->
+        <ImageView
+            android:id="@+id/imageViewContactPhoto"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="centerCrop"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/ic_user" />
+
+        <!-- Contact Name -->
+        <TextView
+            android:id="@+id/textViewContactName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/contact_name"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:layout_gravity="center"
+            android:gravity="center_vertical" />
+
+        <!-- Call Icon -->
+        <ImageView
+            android:id="@+id/imageViewCall"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_accept"
+            android:layout_gravity="center"
+            app:tint="@color/green" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
