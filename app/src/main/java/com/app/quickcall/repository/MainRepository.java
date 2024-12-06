@@ -64,6 +64,7 @@ public class MainRepository implements WebRtcClient.Listener {
             public void onAddStream(MediaStream mediaStream) {
                 super.onAddStream(mediaStream);
 
+                Log.d("initWebRtc: ", "onAddStream");
                 try {
                     mediaStream.videoTracks.get(0).addSink(remoteView);
                 } catch (Exception e) {
@@ -75,7 +76,7 @@ public class MainRepository implements WebRtcClient.Listener {
             public void onConnectionChange(PeerConnection.PeerConnectionState newState) {
                 super.onConnectionChange(newState);
 
-                Log.d("CALL-FEATURE: onConnectionChange: " , " " + newState);
+                Log.d("initWebRtc: " , "onConnectionChange - " + newState);
                 if (newState == PeerConnection.PeerConnectionState.CONNECTED && listener != null) {
                     listener.webrtcConnected();
                 }
@@ -90,7 +91,8 @@ public class MainRepository implements WebRtcClient.Listener {
             @Override
             public void onIceCandidate(IceCandidate iceCandidate) {
                 super.onIceCandidate(iceCandidate);
-                Log.d("CALL-FEATURE: onIceCandidate: " , target + " " + iceCandidate );
+
+                Log.d("initWebRtc: " , "onIceCandidate - " + target + " " + iceCandidate );
                 webRtcClient.sendIceCandidate(iceCandidate,target);
             }
 
@@ -120,7 +122,7 @@ public class MainRepository implements WebRtcClient.Listener {
     @Override
     public void onTransferDataToOtherPeer(CallModel model) {
         firebaseClient.sendMessage(model, () -> {
-
+            Log.d("onTransferDataToOtherPeer: " , "sendMessage - " + model );
         });
     }
 

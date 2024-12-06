@@ -1,6 +1,7 @@
 package com.app.quickcall.webrtc;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.app.quickcall.model.CallModel;
 import com.app.quickcall.utils.DataModelType;
@@ -39,7 +40,6 @@ public class WebRtcClient {
     private CameraVideoCapturer videoCapturer;
     private VideoSource localVideoSource;
     private AudioSource localAudioSource;
-
     private String localTrackId = "local_track";
     private String localStreamId = "local_stream";
     private VideoTrack localVideoTrack;
@@ -60,9 +60,7 @@ public class WebRtcClient {
         localVideoSource = peerConnectionFactory.createVideoSource(false);
         localAudioSource = peerConnectionFactory.createAudioSource(new MediaConstraints());
         mediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveVideo","true"));
-
     }
-
 
     // Initializing Peer Connection
     private void initPeerConnectionFactory() {
@@ -82,7 +80,6 @@ public class WebRtcClient {
         return PeerConnectionFactory.builder().setVideoEncoderFactory(new DefaultVideoEncoderFactory(eglBaseContext, true, true))
                 .setVideoDecoderFactory(new DefaultVideoDecoderFactory(eglBaseContext))
                 .setOptions(options).createPeerConnectionFactory();
-
     }
 
     private PeerConnection createPeerConnection(PeerConnection.Observer observer) {
@@ -93,20 +90,20 @@ public class WebRtcClient {
         void onTransferDataToOtherPeer(CallModel model);
     }
 
-    //Initilizing ui like surface view renderers
-    public void initSurfaceViewRendere(SurfaceViewRenderer viewRenderer){
+    //Initializing UI like surface view renderers
+    public void initSurfaceViewRender(SurfaceViewRenderer viewRenderer){
         viewRenderer.setEnableHardwareScaler(true);
         viewRenderer.setMirror(true);
         viewRenderer.init(eglBaseContext,null);
     }
 
     public void initLocalSurfaceView(SurfaceViewRenderer view){
-        initSurfaceViewRendere(view);
+        initSurfaceViewRender(view);
         startLocalVideoStreaming(view);
     }
 
     public void initRemoteSurfaceView(SurfaceViewRenderer view){
-        initSurfaceViewRendere(view);
+        initSurfaceViewRender(view);
     }
 
     private void startLocalVideoStreaming(SurfaceViewRenderer view) {
@@ -145,6 +142,7 @@ public class WebRtcClient {
         throw new IllegalStateException("front facing camera not found");
     }
 
+    //The one who accepts the call, starts the call flow and creates an OFFER and pass it to the caller (target)
     public void call(String target) {
         peerConnection.createOffer(new SdpObserver() {
             @Override
@@ -154,8 +152,9 @@ public class WebRtcClient {
                     @Override
                     public void onSetSuccess() {
                         super.onSetSuccess();
-                        //its time to transfer this sdp to other peer
+                        //Its time to transfer this sdp to other peer (caller/target)
                         if (listener!=null){
+                            Log.d("caller", target);
                             listener.onTransferDataToOtherPeer(new CallModel(
                                     target,username,sessionDescription.description, DataModelType.Offer
                             ));
@@ -189,8 +188,6 @@ public class WebRtcClient {
         }, mediaConstraints );
     }
 
-
-
     public void closeConnection(){
         try{
             localVideoTrack.dispose();
@@ -199,7 +196,6 @@ public class WebRtcClient {
             peerConnection.close();
 
             closeMedia();
-
         }catch (Exception e){
             e.printStackTrace();
         }
