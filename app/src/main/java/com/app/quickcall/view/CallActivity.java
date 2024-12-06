@@ -1,7 +1,6 @@
 package com.app.quickcall.view;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -109,7 +108,6 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
 
     @Override
     public void webrtcClosed() {
-
         mainRepository.webRtcClient.peerConnection = null;
         runOnUiThread(this::finish);
     }

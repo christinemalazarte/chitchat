@@ -23,17 +23,14 @@ import org.webrtc.SurfaceViewRenderer;
 
 public class MainRepository implements WebRtcClient.Listener {
 
-    public Listener listener;
-    private FirebaseClient firebaseClient;
-    public WebRtcClient webRtcClient;
-    private String username;
     private final Gson gson = new Gson();
-
     private static MainRepository instance;
-
+    public Listener listener;
+    public WebRtcClient webRtcClient;
+    private FirebaseClient firebaseClient;
+    private String username;
     private String currentUsername;
     private String target;
-
     private SurfaceViewRenderer remoteView;
 
     public MainRepository() {
@@ -59,8 +56,6 @@ public class MainRepository implements WebRtcClient.Listener {
     public void logout() {
         firebaseClient.logout();
     }
-
-
 
     public void initWebRtc(Activity activity) {
 
@@ -187,11 +182,9 @@ public class MainRepository implements WebRtcClient.Listener {
                     callBack.onNewEventReceived(model);
                     break;
                 case CallRejected:
-                    Log.d("hereeetest", "testset");
                     callBack.onNewEventReceived(model);
                     break;
             }
-
         });
     }
 
@@ -206,17 +199,13 @@ public class MainRepository implements WebRtcClient.Listener {
                         Log.d("CALL-FEATURE", "Call rejection sent successfully to: " + target);
                     }
             );
-
-
         } else {
             Log.e("CALL-FEATURE", "Cannot reject call: Target is null or empty.");
         }
     }
 
-
     public interface Listener {
         void webrtcConnected();
         void webrtcClosed();
     }
-
 }
