@@ -40,8 +40,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Redirect to SecondActivity
-                String username = "chen"; //binding.editTextUsername.getText().toString();
-                String password = "password"; //binding.editTextPassword.getText().toString();
+                String username = binding.editTextUsername.getText().toString();
+                String password = binding.editTextPassword.getText().toString();
 
                 if (username.isEmpty() || password.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Please input username and password.",

@@ -64,7 +64,6 @@ public class MainRepository implements WebRtcClient.Listener {
 
     public void initWebRtc(Activity activity) {
 
-        Log.d("currenUsername", currentUsername);
         this.webRtcClient = new WebRtcClient(activity.getApplicationContext(), new PeerConnectionObserver() {
             @Override
             public void onAddStream(MediaStream mediaStream) {

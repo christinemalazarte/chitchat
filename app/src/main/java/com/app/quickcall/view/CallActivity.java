@@ -1,6 +1,7 @@
 package com.app.quickcall.view;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -55,7 +56,7 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
                     views.incomingCallLayout.setVisibility(View.VISIBLE);
 
                     if (!isCaller) {
-                        mainRepository.startCall(data.getSender());
+                        mainRepository.startCall(data.getSender()); // who accepts the call
                         views.incomingCallLayout.setVisibility(View.GONE);
                     }
                 });
