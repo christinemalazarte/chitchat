@@ -34,15 +34,22 @@ android {
 
 dependencies {
 
+    //WebRTC
     implementation 'com.infobip:google-webrtc:1.0.0035529'
+
+    //Firebase
     implementation 'com.google.firebase:firebase-database:20.3.0'
     implementation 'com.google.firebase:firebase-analytics:21.3.0'
-    implementation 'com.google.code.gson:gson:2.8.8'
+    implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-database'
     implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
-    implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-database")
-    implementation "androidx.cardview:cardview:1.0.0"
+
+    //Gson
+    implementation 'com.google.code.gson:gson:2.8.8'
+
+    //Views
+    implementation 'androidx.cardview:cardview:1.0.0'
 
     implementation libs.appcompat
     implementation libs.material

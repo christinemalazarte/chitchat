@@ -51,11 +51,8 @@ public class CallActivity extends AppCompatActivity implements MainRepository.Li
         mainRepository.subscribeForLatestEvent(data->{
             if (data.getType() == DataModelType.StartCall){
                 runOnUiThread(()->{
-                    views.incomingNameTV.setText(data.getSender()+" is Calling you");
-                    views.incomingCallLayout.setVisibility(View.VISIBLE);
-
                     if (!isCaller) {
-                        mainRepository.startCall(data.getSender()); // who accepts the call
+                        mainRepository.startCall(data.getSender()); // data.getSender() - caller
                         views.incomingCallLayout.setVisibility(View.GONE);
                     }
                 });

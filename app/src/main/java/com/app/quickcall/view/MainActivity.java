@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements CallListener {
 
                     binding.acceptButton.setOnClickListener(v->{
                         //start the call here
-//                        mainRepository.startCall(data.getSender());
                         binding.incomingCallLayout.setVisibility(View.GONE);
 
                         Intent intent = new Intent(getApplicationContext(), CallActivity.class);
